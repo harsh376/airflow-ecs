@@ -10,6 +10,13 @@ repos:
 
 -   repo: local
     hooks:
+    -   id: docformatter
+        name: Run docformatter
+        entry: make docformatter
+        language: system
+
+-   repo: local
+    hooks:
     -   id: black
         name: Run Black
         entry: make black

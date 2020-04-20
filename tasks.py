@@ -5,7 +5,7 @@ from invoke import task
 
 @task
 def install(ctx):
-    """Configures dev environment"""
+    """Configures dev environment."""
     ctx.run("test -d venv || python3 -m venv venv")
     with ctx.prefix(". venv/bin/activate"):
         ctx.run("pip install -r requirements.txt")
@@ -14,27 +14,25 @@ def install(ctx):
 
 @task
 def start(ctx):
-    """Starts services"""
+    """Starts services."""
     ctx.run("docker-compose up -d")
 
 
 @task
 def stop(ctx):
-    """Stops services"""
+    """Stops services."""
     ctx.run("docker-compose down")
 
 
 @task
 def unset_hooks(ctx):
-    """
-    Unsets all the git hooks
-    """
+    """Unsets all the git hooks."""
     ctx.run("git config --unset-all core.hooksPath")
 
 
 @task
 def lint(ctx):
-    """Lints modified files"""
+    """Lints modified files."""
     files_list = list(set(_get_staged_files(ctx) + _get_unstaged_files(ctx)))
     files = " ".join(files_list)
     _lint_files(ctx, files)
@@ -47,7 +45,7 @@ def lint(ctx):
     }
 )
 def black(ctx, files=None):
-    """Runs Black to format files"""
+    """Runs Black to format files."""
     if files is None:
         files_list = _get_modified_files(ctx)
         files = " ".join(files_list)
@@ -59,6 +57,25 @@ def black(ctx, files=None):
         print("Black: No .py files modified")
 
 
+@task(
+    help={
+        "files": "Files to format. Default: Modified staged and "
+        "unstaged files"
+    }
+)
+def docformatter(ctx, files=None):
+    """Runs Doc-formatter to format docstrings."""
+    if files is None:
+        files_list = _get_modified_files(ctx)
+        files = " ".join(files_list)
+
+    if files.strip() != "":
+        with ctx.prefix(". venv/bin/activate"):
+            ctx.run(f"docformatter --in-place {files}")
+    else:
+        print("docformatter: No files modified")
+
+
 def _get_modified_files(ctx) -> List[str]:
     files_list = list(set(_get_staged_files(ctx) + _get_unstaged_files(ctx)))
     return files_list
@@ -66,9 +83,7 @@ def _get_modified_files(ctx) -> List[str]:
 
 def _get_unstaged_files(ctx) -> List[str]:
     diff_files_raw = ctx.run(
-        f"git diff --name-only "
-        f"--diff-filter=ACM '*.py' ':(exclude)app/**/snapshots/**'",
-        hide=True,
+        f"git diff --name-only " f"--diff-filter=ACM '*.py'", hide=True,
     )
     diff_files_list = diff_files_raw.stdout.splitlines()
     return diff_files_list
@@ -76,8 +91,7 @@ def _get_unstaged_files(ctx) -> List[str]:
 
 def _get_staged_files(ctx) -> List[str]:
     diff_files_raw = ctx.run(
-        f"git diff --name-only --cached "
-        f"--diff-filter=ACM '*.py' ':(exclude)app/**/snapshots/**'",
+        f"git diff --name-only --cached " f"--diff-filter=ACM '*.py'",
         hide=True,
     )
     diff_files_list = diff_files_raw.stdout.splitlines()

@@ -26,3 +26,9 @@ clean:
 black:
 	. venv/bin/activate; \
 	invoke black
+
+
+.PHONY: docformatter
+docformatter:
+	. venv/bin/activate; \
+	invoke docformatter
