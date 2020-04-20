@@ -13,6 +13,12 @@ def install(ctx):
 
 
 @task
+def start(ctx):
+    """Starts services"""
+    ctx.run("docker-compose up -d")
+
+
+@task
 def unset_hooks(ctx):
     """
     Unsets all the git hooks
