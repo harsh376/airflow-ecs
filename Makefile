@@ -13,8 +13,16 @@ venv: requirements.txt
 install:
 	make venv; \
 	. venv/bin/activate; \
-	pip install -r requirements.txt
+	pip install invoke; \
+	invoke unset-hooks; \
+	invoke install
 
 .PHONY: clean
 clean:
 	rm -rf venv
+
+# This command is so that pre-commit can run a local command
+.PHONY: black
+black:
+	. venv/bin/activate; \
+	invoke black
