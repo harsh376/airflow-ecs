@@ -19,6 +19,12 @@ def start(ctx):
 
 
 @task
+def stop(ctx):
+    """Stops services"""
+    ctx.run("docker-compose down")
+
+
+@task
 def unset_hooks(ctx):
     """
     Unsets all the git hooks
