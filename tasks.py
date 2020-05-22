@@ -4,6 +4,12 @@ from invoke import task
 
 
 @task
+def deploy(ctx):
+    """Deploys the airflow infrastructure."""
+    pass
+
+
+@task
 def install(ctx):
     """Configures dev environment."""
     ctx.run("test -d venv || python3 -m venv venv")
@@ -83,7 +89,7 @@ def _get_modified_files(ctx) -> List[str]:
 
 def _get_unstaged_files(ctx) -> List[str]:
     diff_files_raw = ctx.run(
-        f"git diff --name-only " f"--diff-filter=ACM '*.py'", hide=True,
+        f"git diff --name-only " f"--diff-filter=ACM '*.py'", hide=True
     )
     diff_files_list = diff_files_raw.stdout.splitlines()
     return diff_files_list
